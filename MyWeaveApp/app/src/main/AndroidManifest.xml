@@ -45,6 +45,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".DeviceCtrlActivity"
+            android:label="@string/app_name"
+            android:parentActivityName="com.intel.ttzeng.myweaveapp.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+
         <provider
             android:name="com.google.android.apps.weave.gcd.db.GcdContentProvider"
             android:authorities="com.weaveeap.authority"

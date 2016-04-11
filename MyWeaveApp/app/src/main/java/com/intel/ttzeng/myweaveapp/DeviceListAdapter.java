@@ -1,5 +1,6 @@
 package com.intel.ttzeng.myweaveapp;
 
+import android.content.Intent;
 import android.support.v4.util.ArrayMap;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
@@ -32,6 +33,17 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Vi
             this.description = description;
             this.deviceType = deviceType;
             this.deviceImage = deviceImage;
+            parentView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    WeaveDevice device = mDataSet.valueAt(position).first;
+
+                    Intent intent = new Intent(v.getContext(), DeviceCtrlActivity.class);
+                    intent.putExtra(DeviceCtrlActivity.EXTRA_KEY_WEAVE_DEVICE, device);
+                    v.getContext().startActivity(intent);
+                }
+            });
         }
     }
 
@@ -58,16 +70,24 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Vi
     public void onBindViewHolder(ViewHolder holder, int position) {
         // Called by RecyclerView to display the data at the specified position
         Pair<WeaveDevice, ModelManifest> data= mDataSet.valueAt(position);
-        holder.name.setText(data.first.getName());
-        holder.description.setText(data.first.getDescription());
-        if (data.second != null) {
-            holder.deviceType.setText(data.second.getModelName());
+        WeaveDevice device  = data.first;
+        ModelManifest model = data.second;
+        holder.name.setText(device.getName());
+        holder.description.setText(device.getDescription());
+        if (model != null) {
+            holder.deviceType.setText(model.getModelName());
         } else {
             holder.deviceType.setText(R.string.null_manifest);
+        }
+        if (device.getDiscoveryTransport().hasCloud()) {
+            holder.deviceImage.setImageResource(R.drawable.ic_cast_on_light);
+        } else {
+            holder.deviceImage.setImageResource(R.drawable.ic_setting_light);
         }
     }
 
     public void add(WeaveDevice device, ModelManifest manifest) {
+        Log.d(TAG, "Adding device " + device.getId());
         mDataSet.put(device.getId(), new Pair<>(device, manifest));
     }
 
